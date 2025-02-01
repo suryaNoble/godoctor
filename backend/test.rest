@@ -1,0 +1,6 @@
+###
+POST http://localhost:5000/api/admin/add-doctor HTTP/1.1
+Content-Type: multipart/form-data
+{
+    "name":"test1",
+}

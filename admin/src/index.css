@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+@import "tailwindcss";
+
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+
+body {
+    font-family: var(--font-sans);
+  }
+
+
+@theme {
+    --color-primary: #5F6FFF;
+  }
+  
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+  
+  .text-primary {
+    color: var(--color-primary);
+  }
+  
+
+  ::-webkit-scrollbar{
+    @apply hidden
+  }

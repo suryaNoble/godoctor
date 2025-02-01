@@ -1,0 +1,9 @@
+routes yet to create;
+
+specific doctor appointement in top doctors or doctor redirects
+
+contact page
+
+specialization field like gynacology/pediatrician
+contact us
+appointments of a doctor based on dr id
