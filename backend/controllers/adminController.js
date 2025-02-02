@@ -1,5 +1,5 @@
 import validator from 'validator'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { v2 as cloudinary} from 'cloudinary'
 import doctorModel from '../models/doctorModel.js'
 import jwt from 'jsonwebtoken'
@@ -9,6 +9,8 @@ import jwt from 'jsonwebtoken'
 const addDoctor = async (req,res) => {
 
     try {
+        console.log(req.body)
+        console.log('req.body')
         const {name,email,password,speciality,degree,experience,about,fees,address} = req.body
         //we have an image file parsed by upolad.single(image) in adminRoute.js
         const imageFile = req.file
@@ -30,7 +32,7 @@ const addDoctor = async (req,res) => {
 
         const imageUpload = await cloudinary.uploader.upload(imageFile.path,{resource_type:"image"})
         const imageUrl = imageUpload.secure_url
-
+ 
         const doctorData = {
             name,email,password:hashedPassword,image:imageUrl,speciality,degree,experience,about,fees,address:JSON.parse(address),date:Date.now()
         }
@@ -41,6 +43,7 @@ const addDoctor = async (req,res) => {
         res.json({success:true,message:"Doctor added successfully"})
 
     } catch (error) {
+        console.log('adminController lo undi error')
         console.log(error)
         res.status(500).json({message:error.message})
         console.log('adminController.js lo undi error')
@@ -69,4 +72,20 @@ const loginAdmin = async (req,res)=>{
 
 }
 
-export {addDoctor,loginAdmin}
+
+
+//baxkend nundi doctors list All doctors
+
+const allDoctors = async (req,res) =>{
+    try {
+
+        const doctors = await doctorModel.find({}).select('-password')
+        res.json({success:true,doctors})
+        
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+}
+
+export {addDoctor,loginAdmin,allDoctors}

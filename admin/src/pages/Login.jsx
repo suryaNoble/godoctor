@@ -26,7 +26,7 @@ const Login = () => {
                 const {data} = await axios.post(backendUrl + '/api/admin/login',{email,password})
                 if(data.success){
                     console.log(data)
-                    console.log(data.token)
+                    console.log(data.atoken)
                     localStorage.setItem('atoken',data.atoken)
                     setAtoken(data.atoken)
                     toast.success('Login Succesfull',{autoClose:3000,position:'top-center'})

@@ -1,0 +1,123 @@
+
+   [ {
+        "name": "Dr. John Doe",
+        "email": "johndoe@gmail.com",
+        "password": "password123",
+        "speciality": "Cardiologist",
+        "degree": "MD",
+        "experience": "5 Years",
+        "about": "Heart specialist with 5 years of experience.",
+        "fees": 50,
+        "address": { "line1": "Main Street", "line2": "Downtown, NY" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. Amelia Hill",
+        "email": "amelia@gmail.com",
+        "password": "password123",
+        "speciality": "Dermatologist",
+        "degree": "MBBS",
+        "experience": "3 Years",
+        "about": "Expert in skin treatments and dermatology.",
+        "fees": 40,
+        "address": { "line1": "Richmond", "line2": "London" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. Robert Smith",
+        "email": "robertsmith@gmail.com",
+        "password": "password123",
+        "speciality": "Neurologist",
+        "degree": "MBBS, MD",
+        "experience": "8 Years",
+        "about": "Specialist in brain and nerve disorders.",
+        "fees": 60,
+        "address": { "line1": "Sunset Blvd", "line2": "Los Angeles, CA" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. Emily Brown",
+        "email": "emilybrown@gmail.com",
+        "password": "password123",
+        "speciality": "Pediatrician",
+        "degree": "MD",
+        "experience": "6 Years",
+        "about": "Child specialist with a focus on infant care.",
+        "fees": 45,
+        "address": { "line1": "Lakeview Road", "line2": "Chicago, IL" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. William Harris",
+        "email": "williamharris@gmail.com",
+        "password": "password123",
+        "speciality": "Orthopedic",
+        "degree": "MBBS, MS",
+        "experience": "10 Years",
+        "about": "Expert in bone and joint treatments.",
+        "fees": 70,
+        "address": { "line1": "Maple Avenue", "line2": "Boston, MA" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. Sophia Wilson",
+        "email": "sophiawilson@gmail.com",
+        "password": "password123",
+        "speciality": "Gynecologist",
+        "degree": "MBBS, MD",
+        "experience": "7 Years",
+        "about": "Specialist in women's health and maternity care.",
+        "fees": 55,
+        "address": { "line1": "Broadway Street", "line2": "San Francisco, CA" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. James Lee",
+        "email": "jameslee@gmail.com",
+        "password": "password123",
+        "speciality": "ENT Specialist",
+        "degree": "MBBS",
+        "experience": "4 Years",
+        "about": "Expert in ear, nose, and throat treatments.",
+        "fees": 35,
+        "address": { "line1": "Highland Park", "line2": "Seattle, WA" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. Olivia Martinez",
+        "email": "oliviamartinez@gmail.com",
+        "password": "password123",
+        "speciality": "Ophthalmologist",
+        "degree": "MBBS, MS",
+        "experience": "9 Years",
+        "about": "Specialist in eye diseases and vision correction.",
+        "fees": 65,
+        "address": { "line1": "Greenwood Ave", "line2": "Miami, FL" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. Daniel Clark",
+        "email": "danielclark@gmail.com",
+        "password": "password123",
+        "speciality": "Endocrinologist",
+        "degree": "MD",
+        "experience": "8 Years",
+        "about": "Expert in hormonal disorders and diabetes care.",
+        "fees": 55,
+        "address": { "line1": "Sunrise Blvd", "line2": "Dallas, TX" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    },
+    {
+        "name": "Dr. Ava White",
+        "email": "avawhite@gmail.com",
+        "password": "password123",
+        "speciality": "Psychiatrist",
+        "degree": "MBBS, MD",
+        "experience": "12 Years",
+        "about": "Mental health expert specializing in therapy and counseling.",
+        "fees": 75,
+        "address": { "line1": "Elm Street", "line2": "Houston, TX" },
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png"
+    }
+]
+
