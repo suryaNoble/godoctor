@@ -121,3 +121,168 @@
     }
 ]
 
+
+
+// avai;abe doctors
+
+{
+    "success": true,
+    "doctors": [
+      {
+        "_id": "67990f91346774a34fe3f5db",
+        "name": "abdul",
+        "email": "abdul@gmail.com",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738084240/tiu5mwhfkgltlqy6yejj.jpg",
+        "speciality": "orthopaedic",
+        "degree": "MBBS",
+        "experience": "5 years",
+        "about": "i am a very good orthopaedic",
+        "available": true,
+        "fees": 890,
+        "address": "{'line1':'athulur','line2':'kalakam'}",
+        "date": 1738084241823,
+        "slots_booked": {},
+        "__v": 0
+      },
+      {
+        "_id": "679e0cace890489ed84d8635",
+        "name": "xheck2",
+        "email": "check@gmail.com",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738411180/pdwbs8xlt9l766kqorap.png",
+        "speciality": "frcs",
+        "degree": "MBBS",
+        "experience": "1 year",
+        "about": "i a m abou t ",
+        "available": true,
+        "fees": 123,
+        "address": "{line1:\"line1\",\nline2:\"line2\"\n}",
+        "date": 1738411180829,
+        "slots_booked": {},
+        "__v": 0
+      },
+      {
+        "_id": "679e118d244d6e5cd93fab52",
+        "name": "xheck2",
+        "email": "check2@gmail.com",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738412429/sjqco0izo696riva73go.png",
+        "speciality": "frcs",
+        "degree": "MBBS",
+        "experience": "1 year",
+        "about": "i a m abou t ",
+        "available": true,
+        "fees": 123,
+        "address": "{line1:\"line1\",\nline2:\"line2\"\n}",
+        "date": 1738412429948,
+        "slots_booked": {},
+        "__v": 0
+      },
+      {
+        "_id": "679e11d8244d6e5cd93fab54",
+        "name": "xheck2",
+        "email": "check3@gmail.com",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738412504/w8bmmhpvahwon0vwkrnv.png",
+        "speciality": "frcs",
+        "degree": "MBBS",
+        "experience": "1 year",
+        "about": "i a m abou t ",
+        "available": true,
+        "fees": 123,
+        "address": "{line1:\"line1\",\nline2:\"line2\"\n}",
+        "date": 1738412504811,
+        "slots_booked": {},
+        "__v": 0
+      },
+      {
+        "_id": "679e155f1d4c6ca169a37fb6",
+        "name": "specialization",
+        "email": "spe@gmail.com",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738413407/ak82z8xzf3w0uciwu4g0.png",
+        "speciality": "General physician",
+        "degree": "MBBS",
+        "experience": "1 Year",
+        "about": "i am",
+        "available": true,
+        "fees": 1234,
+        "address": {
+          "line1": "line4",
+          "line2": "line45"
+        },
+        "date": 1738413407659,
+        "slots_booked": {},
+        "__v": 0
+      },
+      {
+        "_id": "679e2a510a802a0fffa18db0",
+        "name": "xheck2",
+        "email": "check6@gmail.com",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738418768/jcwlrs2nn9ftmiitsveh.png",
+        "speciality": "frcs",
+        "degree": "MBBS",
+        "experience": "1 year",
+        "about": "i a m abou t ",
+        "available": true,
+        "fees": 123,
+        "address": "{line1:\"line1\",\nline2:\"line2\"\n}",
+        "date": 1738418769235,
+        "slots_booked": {},
+        "__v": 0
+      },
+      {
+        "_id": "679e2c2e0a802a0fffa18db4",
+        "name": "finalised",
+        "email": "finalised@gmail.com",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419245/gwnbikvvh8hvbzo7w6f5.png",
+        "speciality": "General physician",
+        "degree": "Mbbbs",
+        "experience": "1 Year",
+        "about": "go to mongo db atlas before everytime for prfect running!",
+        "available": true,
+        "fees": 5432,
+        "address": {
+          "line1": "LIN45",
+          "line2": "LIN54"
+        },
+        "date": 1738419246616,
+        "slots_booked": {},
+        "__v": 0
+      },
+      {
+        "_id": "679e2cfa0a802a0fffa18db6",
+        "name": "dfgh",
+        "email": "sdfgh@gmail.om",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738419449/avqxqwbnytswvrhhxkgx.png",
+        "speciality": "General physician",
+        "degree": "wery",
+        "experience": "1 Year",
+        "about": "fghj",
+        "available": true,
+        "fees": 2345,
+        "address": {
+          "line1": "dfgh",
+          "line2": "rh"
+        },
+        "date": 1738419450926,
+        "slots_booked": {},
+        "__v": 0
+      },
+      {
+        "_id": "679f4cfa47e6459a0718cae5",
+        "name": "james arduin",
+        "email": "james@godoctor.com",
+        "image": "https://res.cloudinary.com/duqnqenyt/image/upload/v1738493177/lkysh7zzju2kftcemqea.png",
+        "speciality": "Neurologist",
+        "degree": "Nurollogy in USA",
+        "experience": "1 Year",
+        "about": "i am a famous magicina",
+        "available": true,
+        "fees": 1234,
+        "address": {
+          "line1": "brahman ford-2",
+          "line2": "lingual street"
+        },
+        "date": 1738493178764,
+        "slots_booked": {},
+        "__v": 0
+      }
+    ]
+  }
