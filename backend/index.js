@@ -217,6 +217,7 @@
 
 
 // THE ABOVE CODE WORKS PRFECTLY FINE, BUT I WILL BE USING THE BELOW CODE FOR THE MERN BACKEND CONNECTION INSTEAD OF POSTGRESQL 
+//also be commonly called as server.js
 
 
 import express from "express";
@@ -235,6 +236,7 @@ import 'dotenv/config'
 import connectDB from "./config/mongodb.js";
 import connectCloudinary from "./config/cloudinary.js";
 import adminRouter from "./routes/adminRoute.js";
+import doctorRouter from "./routes/doctorRoute.js";
 
 dotenv.config();
 
@@ -251,7 +253,7 @@ app.use(cors());
 app.use('/api/admin',adminRouter)
 //localhost/5000/api/admin/add-doctor because add-doctor is mounted in adminRouter.js in routes and addDoctor will be executed which is an api controller in adminController.js which is mounted in adminRoute
 
-
+app.use('/api/doctor',doctorRouter)
 
 
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import './App.css'
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
@@ -13,12 +14,16 @@ import About from './pages/About'
 import Doctors from './pages/Doctors'
 import Footer from './components/Footer'
 import Contact from './pages/Contact'
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
+
 function App() {
 
   return (
     
     <div className='mx-4 sm:mx-[10%]'>
-
+      <ToastContainer/>
       <Navbar />
 
       <Routes>
