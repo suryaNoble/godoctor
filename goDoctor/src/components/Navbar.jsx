@@ -116,14 +116,22 @@
 //  import React from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import {assets} from '../assets/assets_frontend/assets'
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AppContext } from '../context/AppContext';
  const Navbar = () => {
 
   const navigate = useNavigate();
 
   const [showMenu,setShowMenu] = useState(false)
-  const [token,setToken] = useState(true)
   const [dropDown,setDropDown] = useState(false)
+
+  const{token,setToken} = useContext(AppContext)
+
+  const logout = ()=>{
+    setToken(false)
+    localStorage.removeItem('token')
+  }
+
    return (
     //  <div className="text-primary">Navbar</div>
     <div className='flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-500'>
@@ -172,7 +180,7 @@ import { useState } from 'react';
                   <p onClick={()=>{navigate('/profile');setDropDown(false)}} className='hover:text-primary cursor-pointer'>My profile</p>
                   <p onClick={()=>{navigate('/myappointments');setDropDown(false)}} className='hover:text-primary cursor-pointer'>My appointments</p>
                   <Link to={'/'}>
-                  <p onClick={()=>{setToken(false);setDropDown(false)}} className='hover:text-primary cursor-pointer'>Logout</p>
+                  <p onClick={()=>{logout();setDropDown(false)}} className='hover:text-primary cursor-pointer'>Logout</p>
                   </Link>
                 </div>
               </div>

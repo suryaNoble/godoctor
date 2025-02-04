@@ -1,12 +1,15 @@
 // import React from 'react'
 import {useForm} from "react-hook-form"
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { MdEmail } from "react-icons/md";
 import {Link, useNavigate} from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import {  RiEyeFill, RiEyeOffFill } from "react-icons/ri";
+import {AppContext} from '../context/AppContext'
+import axios from 'axios'
+import {toast} from 'react-toastify'
 
 
 const schema =yup.object().shape({
@@ -42,34 +45,72 @@ const Login = () => {
     });
 
 
- const onSubmit = async (data) => {
-    console.log(data);
-    try {
-        const response = await fetch("http://localhost:5000/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-    
-        const result = await response.json();
-    
-        if (response.ok) {
-          console.log("User signed in successfully:", result.user);
-          navigate("/navbar");
-          reset();
-        } else {
-          console.error("Error siging in user:", result.error);
-          alert("invalid credentials");
-        }
-      } catch (error) {
-        console.error("Network error:", error);
-      }
+    const [email,setEmail] = useState('')
+    const [password,setPassword] = useState('')
 
-      reset();
+    const {backendUrl,token,setToken} = useContext(AppContext)
 
-    };
+
+    //this onsubmit works fine and navigates to /navigate but without any db checks for user existence
+//  const onSubmit = async (data) => {
+//     console.log(data);
+//     try {
+//         const response = await fetch("http://localhost:5000/api/user/login", {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify(data),
+//         });
+    
+//         const result = await response.json();
+    
+//         if (response.ok) {
+//           console.log("User signed in successfully:", result.user);
+//           navigate("/navbar");
+//           reset();
+//         } else {
+//           console.error("Error siging in user:", result.error);
+//           alert("invalid credentials");
+//         }
+//       } catch (error) {
+//         console.error("Network error:", error);
+//       }
+
+//       reset();
+
+//     };
+
+
+const onSubmit = async (formData)=>{
+
+  
+
+  try {
+
+    const {data} = await axios.post('http://localhost:5000/api/user/login',formData,
+      {
+        headers: { "Content-Type": "application/json" }  
+      })
+
+    console.log(formData);
+    console.log('login.jsx sending post request');
+    
+    
+    
+
+    if(data.success){
+      localStorage.setItem('token',data.token)
+      setToken(data.token)
+    }else{
+      toast.error(data.message)
+    }
+    
+  } catch (error) {
+    console.log(error)
+    // res.json({success:false,message:"login failed in Login.jsc of goDoctor/pages"})
+  }
+}
  
 
     const handleGoogleLogin = async () => {
@@ -84,6 +125,15 @@ const Login = () => {
 const [showPassword, setShowPassword] = useState(false);
 
 
+//redirecting user after succesful login
+
+useEffect(()=>{
+  if(token){
+    navigate('/')
+  }
+},[token])
+
+
     
     return (
         <div className="w-full h-screen rounded-lg flex justify-center items-center bg-cover bg-center" style={{ backgroundImage: "url('/water.jpg')" }}>
@@ -96,6 +146,7 @@ const [showPassword, setShowPassword] = useState(false);
                   <input
                     type="email"
                     name="email"
+                    onChange={(e)=>{setEmail(e.target.value)}}
                     {...register("email")}
                     placeholder="Email"
                     className="w-full pl-12 pr-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
@@ -106,6 +157,7 @@ const [showPassword, setShowPassword] = useState(false);
                     <input
                       type={showPassword?"text":"password"}
                       name="password"
+                      onChange={(e)=>{setPassword(e.target.value)}}
                       {...register("password")}
                       placeholder="Password"
                       className="w-full pl-12 pr-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"                    />

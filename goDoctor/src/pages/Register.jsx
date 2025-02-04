@@ -7,7 +7,10 @@ import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
-
+import { AppContext } from "../context/AppContext";
+import axios from 'axios'
+import { toast } from "react-toastify";
+import { useContext, useState } from "react";
 
 const schema = yup.object().shape({
   name: yup
@@ -40,32 +43,64 @@ const Register = () => {
     mode: "onChange", 
   });
 
-  const onSubmit = async (data) => {
-    console.log(data);
+
+  const [name,setName] = useState('')
+  const [email,setEmail] = useState('')
+  const [password,setPassword] = useState('')
+
+  const {backendUrl,token,setToken} = useContext(AppContext)
+
+
+  //works fine but nt needed
+
+  // const onSubmit = async (data) => {
+  //   console.log(data);
+  //   try {
+  //       const response = await fetch("http://localhost:5000/register", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(data),
+  //       });
+    
+  //       const result = await response.json();
+    
+  //       if (response.ok) {
+  //         console.log("User registered successfully:", result.user);
+  //         reset();
+  //       } else {
+  //         console.error("Error registering user:", result.error);
+  //       }
+  //     } catch (error) {
+  //       console.error("Network error:", error);
+  //     }
+
+  //     reset();
+
+  //   };
+
+  const onSubmit = async (formData)=>{
+
     try {
-        const response = await fetch("http://localhost:5000/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-    
-        const result = await response.json();
-    
-        if (response.ok) {
-          console.log("User registered successfully:", result.user);
-          reset();
-        } else {
-          console.error("Error registering user:", result.error);
-        }
-      } catch (error) {
-        console.error("Network error:", error);
+  
+      const {data} = await axios.post('http://localhost:5000/api/user/register',formData,
+        {
+          headers: { "Content-Type": "application/json" }  
+        })
+  
+      if(data.success){
+        localStorage.setItem('token',data.token)
+        setToken(data.token)
+      }else{
+        toast.error(data.message)
       }
-
-      reset();
-
-    };
+      
+    } catch (error) {
+      console.log(error)
+      // res.json({success:false,message:"register failed in register.jsx of goDoctor/pages"})
+    }
+  }
 
 
   const handleGoogleLogin = async () => {
@@ -89,6 +124,7 @@ const Register = () => {
             <div className="relative">
               <input
                 type="text"
+                onChange={(e)=>{setName(e.target.value)}}
                 {...register("name")}
                 placeholder="Name"
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
@@ -102,6 +138,7 @@ const Register = () => {
             <div className="relative">
               <input
                 type="email"
+                onChange={(e)=>{setEmail(e.target.value)}}
                 {...register("email")}
                 placeholder="Email"
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
@@ -115,6 +152,7 @@ const Register = () => {
             <div className="relative">
               <input
                 type="password"
+                onChange={(e)=>{setPassword(e.target.value)}}
                 {...register("password")}
                 placeholder="Password"
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
