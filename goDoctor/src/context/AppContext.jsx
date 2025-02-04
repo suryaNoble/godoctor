@@ -4,7 +4,7 @@ import { createContext, useEffect, useState } from "react";
 // used when we used dummy data but now we are getting data from backend using getDoctorsData()
 import axios from 'axios'
 export const AppContext = createContext()
-import toast from 'react-toastify'
+
 
 const AppContextProivder = (props) => {
 
@@ -15,9 +15,32 @@ const AppContextProivder = (props) => {
     const [token,setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):false)
     const [userData,setUserData] = useState(false)
 
-    const value ={
-        doctors,currency,token,setToken,backendUrl,userData,setUserData,loadUserProfileData
+
+    const loadUserProfileData = async ()=>{
+        try {
+
+            const {data} = await axios.get(backendUrl+'/api/user/get-profile',{headers:{token}})
+            
+            if(data.success){
+                setUserData(data.userData)
+            }else{
+                console.log(data.message)
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
     }
+
+    useEffect(()=>{
+        if(token){
+            loadUserProfileData()
+        }else{
+            setUserData(false)
+        }
+    },[token])
+
+   
 
     const getDoctorsData = async ()=>{
 
@@ -36,36 +59,19 @@ const AppContextProivder = (props) => {
     }
 
 
-    const loadUserProfileData = async ()=>{
-        try {
-
-            const {data} = await axios.get(backendUrl+'/api/user/get-profile',{headers:{token}})
-            
-            if(data.success){
-                setUserData(data.userData)
-            }else{
-                toast.error(data.message)
-            }
-            
-        } catch (error) {
-            console.log(error)
-            toast.error(error.message)
-            return resizeBy.json({success:false,message:error.message})
-        }
+    const value ={
+        doctors,currency,token,setToken,backendUrl,userData,setUserData,loadUserProfileData
     }
+
+
+    
 
 
     useEffect(()=>{
         getDoctorsData()
     },[])
 
-    useEffect(()=>{
-        if(token){
-            loadUserProfileData()
-        }else{
-            setUserData(false)
-        }
-    },[token])
+   
 
     
 
