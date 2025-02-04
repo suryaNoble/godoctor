@@ -6,7 +6,7 @@ import axios from "axios";
 const Profile = () => {
   const { userData, setUserData, token, backendUrl, loadUserProfileData } = useContext(AppContext);
   const [isEdit, setIsEdit] = useState(false);
-  const [image, setImage] = useState(null); // Changed from false to null
+  const [image, setImage] = useState(null); 
 
   const updateUserProfileData = async () => {
     try {
@@ -28,13 +28,13 @@ const Profile = () => {
       if (data.success) {
         await loadUserProfileData();
         setIsEdit(false);
-        setImage(null); // Reset image state
+        setImage(null); 
       } else {
         alert(data.message);
       }
     } catch (error) {
       console.log(error);
-      alert("An error occurred: " + error.message); // Improved error handling
+      alert("An error occurred: " + error.message); 
     }
   };
 
