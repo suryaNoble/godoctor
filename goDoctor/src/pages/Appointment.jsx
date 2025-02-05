@@ -1,86 +1,139 @@
 // import React from 'react'
 
 import { useContext, useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { AppContext } from "../context/AppContext"
 import { assets } from "../assets/assets_frontend/assets"
 import RelatedDoctors from "../components/RelatedDoctors"
+import axios from "axios"
 
 const Appointment = () => {
 
   const {docId} = useParams()
-  const {doctors,currency} = useContext(AppContext)
+  const {doctors,currency, backendUrl,token,getDoctorsData} = useContext(AppContext)
 
+  const navigate = useNavigate()
   const daysOfWeek = ['SUN','MON','TUE','WED','THU','FRI','SAT']
   const [docInfo,setDocInfo] = useState(null)
   const [docSlots,setDocSlots] = useState([])
   const [slotIndex,setSlotIndex] = useState(0)
   const [slotTime,setSlotTime] = useState('')
 
-  const fetchDoctorInfo = async ()=>{
-    const docInfo = doctors.find((doc)=>doc._id === docId)
-    setDocInfo(docInfo)
-    
+  const fetchDoctorInfo = async () => {
+    console.log("Fetching doctor info for docId:", docId); // Log the docId
+    console.log("Available doctors:", doctors); // Log the doctors array
+
+    const docInfo = await doctors.find((doc) => doc._id === docId);
+   
+    setDocInfo(docInfo);
   }
 
-  const getAvailableSlots = async ()=>{
-      setDocSlots([])
+  const getAvailableSlots = async () => {
+    if (!docInfo || !docInfo.slots_booked) return; // Add check for docInfo and slots_booked
 
-      let today = new Date()
+    setDocSlots([])
 
-      let groupedSlots = []
+    let today = new Date()
 
-      for (let i=0;i<7;i++){
-        let currentDate = new Date(today)
-        currentDate.setDate(today.getDate()+i)
+    let groupedSlots = []
 
-        let endTime = new Date()
-        endTime.setDate(today.getDate()+i)
-        endTime.setHours(21,0,0,0)
+    for (let i=0;i<7;i++){
+      let currentDate = new Date(today)
+      currentDate.setDate(today.getDate()+i)
+
+      let endTime = new Date()
+      endTime.setDate(today.getDate()+i)
+      endTime.setHours(21,0,0,0)
 
 
-        if(today.getDate() === currentDate.getDate() && currentDate.getHours()>=10){
-          if(currentDate.getMinutes() > 30){
-            currentDate.setHours(currentDate.getHours()+1)
-            currentDate.setMinutes(0)
-          }
-          else if(currentDate.getMinutes() < 30){
-            currentDate.setHours(currentDate.getHours())
-            currentDate.setMinutes(30)
-          }else{
-            currentDate.setHours(10)
-            currentDate.setMinutes(0)
-          }
+      if(today.getDate() === currentDate.getDate() && currentDate.getHours()>=10){
+        if(currentDate.getMinutes() > 30){
+          currentDate.setHours(currentDate.getHours()+1)
+          currentDate.setMinutes(0)
+        }
+        else if(currentDate.getMinutes() < 30){
+          currentDate.setHours(currentDate.getHours())
+          currentDate.setMinutes(30)
         }else{
           currentDate.setHours(10)
           currentDate.setMinutes(0)
         }
-
-        let timeSlots =[]
-
-        while(currentDate<endTime){
-          let formattedTime = currentDate.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
-          timeSlots.push({
-            datetime: new Date(currentDate),
-            time: formattedTime
-          })
-
-          currentDate.setMinutes(currentDate.getMinutes()+30)
-          
-        }
-        groupedSlots.push(timeSlots)
-
-
-
-        setDocSlots(groupedSlots)
-
-
+      }else{
+        currentDate.setHours(10)
+        currentDate.setMinutes(0)
       }
- 
+
+      let timeSlots =[]
+
+      while(currentDate<endTime){
+        let formattedTime = currentDate.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+        
+        let day = currentDate.getDate()
+        let month = currentDate.getMonth()+1
+        let year = currentDate.getFullYear()
+
+        const slotDate = day+"_"+month+"_"+year
+        const slotTime = formattedTime
+
+        const isSlotAvailable = docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(slotTime) ? false : true;
+
+
+        
+       isSlotAvailable && timeSlots.push({
+          datetime: new Date(currentDate),
+          time: formattedTime
+        })
+      
+
+        currentDate.setMinutes(currentDate.getMinutes()+30)
+        
+      }
+      groupedSlots.push(timeSlots)
+
+      setDocSlots(groupedSlots)
+    }
+  }
+
+  const bookAppointment = async ()=>{
+
+    if(!token){
+      alert("Log in to book appointment")
+      return navigate('/login')
+    }
+
+    try {
+
+      const date = docSlots[slotIndex][0].datetime
+
+      let day = date.getDate()
+      let month = date.getMonth()+1
+      //since jan we are getting 0
+      let year = date.getFullYear()
+
+      const slotDate = day + "_" + month + "_" + year
+      // console.log(slotDate);
+
+      const {data} = await axios.post(backendUrl+'/api/user/book-appointment',{docId,slotDate,slotTime},{headers:{token}})
+
+      if(data.success){
+        alert("Appointment booked")
+        getDoctorsData()
+        navigate('/my-appointments')
+      }else{
+        alert('Slot unavailable!')
+      }
+      
+    } catch (error) {
+      console.log(error)
+      console.log("appointment.jsx lo error")
+      console.log(error.message);
+      
+    }
   }
 
   useEffect(()=>{
     fetchDoctorInfo()
+    getDoctorsData()
   },[doctors,docId])
 
   useEffect(()=>{
@@ -120,12 +173,12 @@ const Appointment = () => {
 
       <div className="sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-700">
       <p>Booking Slots</p>
-      <div className="flex gap-3 items-center w-full mt-4">
+      <div className="flex gap-3 items-center overflow-scroll w-full mt-4">
         {docSlots.length &&
           docSlots.map((daySlots, index) => (
             <div
               key={index}
-              className={`text-center py-6 min-w-16 rounded-full cursor-pointer ${
+              className={`text-center py-6 min-w-16 rounded-full overflow-scroll cursor-pointer ${
                 slotIndex === index ? "bg-primary text-white" : "border border-gray-200"
               }`}
               onClick={() => {
@@ -145,7 +198,7 @@ const Appointment = () => {
           ))}
       </div>
 
-      <button  className="bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6" >
+      <button onClick={bookAppointment}  className="bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6" >
         Book An Appointment
       </button>
 </div>
