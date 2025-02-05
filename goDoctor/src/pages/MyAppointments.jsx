@@ -1,7 +1,9 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 
 const MyAppointments = () => {
@@ -9,6 +11,8 @@ const MyAppointments = () => {
   const {backendUrl, token, getDoctorsData} = useContext(AppContext)
 
   const [appointments,setAppointments] = useState([])
+
+  const navigate = useNavigate()
 
   const getUserAppointments = async ()=>{
     try {
@@ -37,6 +41,7 @@ const MyAppointments = () => {
       if(data.success){
         alert(data.message)
         getUserAppointments()
+        getDoctorsData()
       }else{
         alert(data.message)
       }
@@ -45,6 +50,61 @@ const MyAppointments = () => {
       console.log('Myappointments.jsx lo cancalappointments');
       
     }
+  }
+
+
+
+const initpay = (order)=>{
+
+  const options ={
+    key: import.meta.env.VITE_RAZORPAY_KEY,
+    amount:order.amount,
+    currency:order.currency,
+    name:'Appointment payment',
+    description:'Appointment payment',
+    order_id:order.id,
+    receipt:order.receipt,
+    handler:async (response) =>{
+     
+      try {
+        const {data} = await axios.post(backendUrl+'/api/user/verifyPayment',response,{headers:{token}})
+        if(data.success){
+          getUserAppointments()
+          navigate('/my-appointments')
+        }
+      } catch (error) {
+        console.log(error);
+        
+      }
+    }
+
+  }
+
+  const rzp = new Razorpay(options).open()
+
+
+}
+
+  
+  const appointmentRazorpay = async (appointmentId)=>{
+
+    try {
+      
+      const {data} = await axios.post(backendUrl+'/api/user/payment',{appointmentId},{headers:{token}})
+      
+      if(data.success){
+          initpay(data.order)  
+                
+      }else{
+        console.log('success kaadu faliure myappointment.jsx lo appointment razorpay');
+      }
+    }catch (error) {
+      console.log(error);
+      console.log('payment error in MYAppointment.jsx');
+      
+      
+    }
+
   }
 
 
@@ -77,7 +137,9 @@ const MyAppointments = () => {
               </div>
               <div></div>
               <div className='flex flex-col gap-2 justify-end' >
-                <button  className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:hover:text-black' disabled={item.cancelled}  >Pay Online</button>
+                {item.payment?<button className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:hover:text-black' disabled={item.cancelled || item.payment}  >Paid</button>
+              :<button onClick={()=>appointmentRazorpay(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:hover:text-black' disabled={item.cancelled}  >Pay Online</button>
+              }
                 {/* {!item.cancelled && <button onClick={()=>{cancelAppointment(item._id)}} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300' >Cancel Appointment</button>} */}
                 {item.cancelled? <p className='text-red-700 pl-3' >Cancelled Apointment</p> : <button onClick={()=>{cancelAppointment(item._id)}} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300' >Cancel Appointment</button>}
               </div>

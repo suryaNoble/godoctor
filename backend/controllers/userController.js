@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 import doctorModel from '../models/doctorModel.js'
 import appointmentModel from '../models/appointmentModel.js';
+import razorpay from 'razorpay'
 
 // Registering user
 const registerUser = async (req, res) => {
@@ -237,6 +238,61 @@ const cancelAppointment = async (req,res)=>{
     }
 }
 
+//payment using razorpay
 
+const razorpayInstance = new razorpay({
+    key_id:process.env.RAZORPAY_KEY,
+    key_secret:process.env.RAZORPAY_SECRET
+})
 
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointments, cancelAppointment };
+const paymentRazorpay = async (req,res) =>{
+    try {
+        const {appointmentId} = req.body
+        const appointmentData = await appointmentModel.findById(appointmentId)
+        
+        if(!appointmentData || appointmentData.cancelled){
+            return res.json({success:false,message:"Appointment cancelled or no found!"})
+        }
+
+        const options = {
+            amount: appointmentData.amount,
+            currency:process.env.CURRENCY,
+            receipt:appointmentId,
+        }
+
+        const order = await razorpayInstance.orders.create(options)
+
+        res.json({success:true,order})
+
+    }catch(error){
+        console.log(error);
+        res.json({success:false,message:error.message})
+
+    }
+    
+}
+
+//payment verification
+
+const verifyPayment = async (req,res)=>{
+
+    try {
+        
+        const {razorpay_order_id} = req.body
+        const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id)
+
+        if(orderInfo.status == "paid"){
+            await appointmentModel.findByIdAndUpdate(orderInfo.receipt,{payment:true})
+            res.json({success:true,message:"payment successful"})
+        }else{
+            res.json({success:false,message:"payment failed"})
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,messsage:error.message})
+        
+    }
+}
+
+export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointments, cancelAppointment, paymentRazorpay, verifyPayment };
