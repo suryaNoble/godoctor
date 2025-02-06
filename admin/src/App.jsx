@@ -12,13 +12,15 @@ import Dashboard from './pages/Admin/Dashboard';
 import AllAppointments from './pages/Admin/AllAppointments';
 import DoctorsList from './pages/Admin/DoctorsList';
 import AddDoctor from './pages/Admin/AddDoctor';
+import { DoctorContext } from './context/DoctorContext';
 
 const App = () => {
 
   const {atoken} = useContext(AdminContext)
+  const {dtoken} = useContext(DoctorContext)
 
 
-  return atoken ? (
+  return atoken || dtoken ? (
     <div className='bg-[#F8F9Fd]' >
       <ToastContainer/>
       <Navbar/>

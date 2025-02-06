@@ -2,7 +2,7 @@ import express from 'express'
 // eyJhbGciOiJIUzI1NiJ9.YWRtaW5AZ29kb2N0b3IuY29tYWRtaW4xMjM.JBC5W4-6s6GPSw8O8VUTJYlMVQLLWcq4PgBAliYMZvQ
 // atoken
 
-import {addDoctor,allDoctors,loginAdmin} from '../controllers/adminController.js'
+import {addDoctor,allDoctors,loginAdmin, appointmentsAdmin, cancelAppointmentAdmin, adminDashboard} from '../controllers/adminController.js'
 import doctorModel from '../models/doctorModel.js'
 
 import upload from '../middlewares/multer.js'
@@ -12,10 +12,13 @@ import { changeAvailability } from '../controllers/doctorController.js'
 const adminRouter = express.Router()
 
 adminRouter.post('/add-doctor',authAdmin,upload.single('image'),addDoctor)
-// adminRouter.post('/add-doctor',upload.single('image'),addDoctor)
 adminRouter.post('/login',loginAdmin)
 adminRouter.post('/all-doctors',authAdmin,allDoctors)
 adminRouter.post('/change-availability',authAdmin,changeAvailability)
+adminRouter.get('/appointments',authAdmin,appointmentsAdmin)
+adminRouter.post('/cancel-appointment',authAdmin,cancelAppointmentAdmin)
+adminRouter.get('/dashboard',authAdmin,adminDashboard)
+
 
 adminRouter.post("/add-multiple-doctors", async (req, res) => {
     try {

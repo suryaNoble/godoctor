@@ -6,9 +6,11 @@ export const AppContext = createContext()
 
 const AppContextProvider = (props)=>{
 
+    const currency = "₹"
+
     // any value added in below value can be accessed by any file using below props.children
     const value ={
-
+        currency
     }
 
     return(
