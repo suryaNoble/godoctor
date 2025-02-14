@@ -1,6 +1,7 @@
 import doctorModel from "../models/doctorModel.js"
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import appointmentModel from  '../models/appointmentModel.js'
 
 const changeAvailability = async(req,res)=>{
     try {
@@ -54,5 +55,157 @@ const doctorLogin = async (req,res)=>{
 }
 
 
+// Doctor Appointments API
 
-export {changeAvailability,doctorList,doctorLogin}
+const appointmentsDoctor = async(req,res)=>{
+    try {
+        
+        const {docId} = req.body
+        const appointments = await appointmentModel.find({docId})
+
+        res.json({success:true,appointments})
+
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:error.message})
+    }
+}
+
+
+// docor completing an appointment
+
+const appointmentComplete = async (req,res)=>{
+    try {
+        
+        const {docId, appointmentId} = req.body
+
+        const appointmentData = await appointmentModel.findById(appointmentId)
+
+        if(appointmentData && appointmentData.docId === docId){
+
+            await appointmentModel.findByIdAndUpdate(appointmentId,{isCompleted: true})
+
+            return res.json({success:true,message:"Appointment completed"})
+        }else{
+            return res.json({success:false,message:"Invalid appointment or doctor"})
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:error.message})
+    }
+
+}
+
+
+
+// docor cancelling an appointment
+
+const appointmentCancel = async (req,res)=>{
+    try {
+        
+        const {docId, appointmentId} = req.body
+        console.log(req.body);
+        
+        
+        
+
+        const appointmentData = await appointmentModel.findById(appointmentId)
+
+        if(appointmentData && appointmentData.docId === docId){
+
+            await appointmentModel.findByIdAndUpdate(appointmentId,{cancelled: true})
+
+            return res.json({success:true,message:"Appointment cancelled"})
+        }else{
+            return res.json({success:false,message:"Invalid appointment or doctor"})
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:error.message})
+    }
+
+}
+
+
+//API from doctor dashboard
+
+const doctorDashboard = async(req,res)=>{
+
+    try {
+
+        const {docId} = req.body
+        
+        const appointments = await appointmentModel.find({ docId });
+
+        if (!appointments || appointments.length === 0) {
+            return res.json({ 
+                success: true, 
+                dashData: { earnings: 0, patients: 0, appointments: 0, latestAppointments: [] } 
+            });
+        }
+        let earnings = 0
+
+        appointments.map((item)=>{
+
+            if(item.isCompleted || item.payment){
+                earnings += item.amount
+            }
+
+        })
+
+        let patients = []
+
+        appointments.map((item)=>{
+            if(!patients.includes(item.userId)){
+                patients.push(item.userId)
+            }
+        })
+
+
+        const dashData = {
+            earnings,
+            patients:patients.length,
+            appointments:appointments.length,
+            latestAppointments:appointments.reverse().slice(0,5)
+        }
+
+        res.json({success:true,dashData})
+        
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:error.message})
+    }
+
+}
+
+
+
+//API for docotor profile
+
+const doctorProfile = async(req,res)=>{
+    try {
+        const {docId} = req.body
+        const profileData = await doctorModel.findById(docId).select('-password')
+
+        res.json({success:true,profileData})
+
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:error.message})
+    }
+}
+
+//API for doctor profile update
+
+const updateDoctorProfile = async(req,res)=>{
+    try {
+        const {docId,fees,address,available} = req.body
+        await doctorModel.findByIdAndUpdate(docId,{fees,address,available})
+        res.json({success:true,message:"profile updated"})
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:error.message})
+    }
+}
+
+export {changeAvailability,doctorList,doctorLogin,appointmentsDoctor,appointmentComplete,appointmentCancel, doctorDashboard,updateDoctorProfile, doctorProfile}

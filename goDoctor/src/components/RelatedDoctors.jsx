@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // import React from 'react'
 
 import { useContext, useEffect, useState } from "react"
@@ -14,8 +15,6 @@ const RelatedDoctors = ({docId,speciality}) => {
     const navigate = useNavigate()
 
     useEffect(()=>{
-        // console.log(speciality)
-        console.log(docId)
         
         if(doctors.length > 0 && speciality){
             const relatedDocs = doctors.filter((doc) => doc.speciality === speciality && doc._id !== docId)
@@ -34,9 +33,9 @@ const RelatedDoctors = ({docId,speciality}) => {
                 <div key={index} onClick={()=>{navigate(`/appointment/${item._id}`); scrollTo(0,0)}} className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-300 ">
                     <img className="bg-blue-50" src={item.image} alt="raatleda?" />
                     <div className="p-4">
-                        <div className="flex items-center gap-2 text-sm text-center text-green-500">
-                            <p className="w-2 h-2 bg-green-500 rounded-full"></p>
-                                <p>Available</p>
+                        <div className="flex items-center gap-2 text-sm text-center">
+                        <p className={`w-2 h-2 ${item.available?'bg-green-500':'bg-gray-500'}  rounded-full`}></p>
+                        <p className={`${item.available?'text-green-600':'text-gray-600'}`} >{item.available?'Available':"Unavaiable"}</p>
                         </div>
                         <p className="text-gray-900 text-lg font-medium" >{item.name}</p>
                         <p className="text-gray-600 text-sm ">{item.speciality}</p>

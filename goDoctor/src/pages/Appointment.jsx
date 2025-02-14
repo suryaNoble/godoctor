@@ -20,8 +20,7 @@ const Appointment = () => {
   const [slotTime,setSlotTime] = useState('')
 
   const fetchDoctorInfo = async () => {
-    console.log("Fetching doctor info for docId:", docId); // Log the docId
-    console.log("Available doctors:", doctors); // Log the doctors array
+    
 
     const docInfo = await doctors.find((doc) => doc._id === docId);
    
@@ -29,7 +28,7 @@ const Appointment = () => {
   }
 
   const getAvailableSlots = async () => {
-    if (!docInfo || !docInfo.slots_booked) return; // Add check for docInfo and slots_booked
+    if (!docInfo || !docInfo.slots_booked) return;
 
     setDocSlots([])
 
@@ -103,7 +102,20 @@ const Appointment = () => {
 
     try {
 
-      const date = docSlots[slotIndex][0].datetime
+      if (!slotTime || !docSlots[slotIndex] || !docSlots[slotIndex][0]) {
+
+        alert("Please select both date and time.");
+        return;
+      }
+
+      const date = docSlots[slotIndex][0].datetime; // Ensure docSlots[slotIndex][0] is defined
+      if (date.getHours() >= 20 && date.getMinutes() > 30) {
+        alert("Booking is available from tomorrow.");
+        return;
+      }
+
+
+
 
       let day = date.getDate()
       let month = date.getMonth()+1
@@ -112,16 +124,30 @@ const Appointment = () => {
 
       const slotDate = day + "_" + month + "_" + year
       // console.log(slotDate);
-
-      const {data} = await axios.post(backendUrl+'/api/user/book-appointment',{docId,slotDate,slotTime},{headers:{token}})
-
-      if(data.success){
-        alert("Appointment booked")
-        getDoctorsData()
-        navigate('/my-appointments')
-      }else{
-        alert('Slot unavailable!')
+      if(!slotDate){
+        alert("No slots selected")
       }
+
+      const { data } = await axios.post(backendUrl + '/api/user/book-appointment', { userId: token, docId, slotDate, slotTime }, { headers: { token } });
+
+
+      if (data.success) {
+        alert("Appointment booked");
+        getDoctorsData();
+        navigate('/my-appointments');
+      } else {
+        alert(data.message);
+      }
+      
+      if (docSlots[slotIndex].length === 0) {
+        alert("No slots available for the selected date.");
+        return;
+      }
+
+      
+
+
+
       
     } catch (error) {
       console.log(error)
@@ -174,8 +200,8 @@ const Appointment = () => {
       <div className="sm:ml-72 sm:pl-4 mt-4 font-medium text-gray-700">
       <p>Booking Slots</p>
       <div className="flex gap-3 items-center overflow-scroll w-full mt-4">
-        {docSlots.length &&
-          docSlots.map((daySlots, index) => (
+        {docSlots.length > 0 && docSlots.map((daySlots, index) => (
+          daySlots.length > 0 && (
             <div
               key={index}
               className={`text-center py-6 min-w-16 rounded-full overflow-scroll cursor-pointer ${
@@ -185,10 +211,14 @@ const Appointment = () => {
                 setSlotIndex(index); 
               }}
             >
-              <p>{daysOfWeek[new Date(daySlots[0].datetime).getDay()]}</p>
-              <p>{new Date(daySlots[0].datetime).getDate()}</p>
+              <p>{daysOfWeek[new Date(daySlots[0]?.datetime).getDay()]}</p>
+              <p>{new Date(daySlots[0]?.datetime).getDate()}</p>
             </div>
-          ))}
+          )
+        ))}
+
+       
+
       </div>
 
       <div className="flex items-center gap-3 w-full mt-4 overflow-scroll" >
@@ -198,7 +228,8 @@ const Appointment = () => {
           ))}
       </div>
 
-      <button onClick={bookAppointment}  className="bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6" >
+      <button onClick={bookAppointment} className="bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6">
+
         Book An Appointment
       </button>
 </div>

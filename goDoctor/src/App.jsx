@@ -16,6 +16,8 @@ import Footer from './components/Footer'
 import Contact from './pages/Contact'
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "sonner";
+
 
 
 function App() {
@@ -23,7 +25,7 @@ function App() {
   return (
     
     <div className='mx-4 sm:mx-[10%]'>
-      <ToastContainer/>
+      <Toaster position="top-center" richColors />
       <Navbar />
 
       <Routes>

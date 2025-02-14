@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -7,11 +7,12 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from 'axios'
 import { toast } from "react-toastify";
 import { useContext, useState } from "react";
+
 
 const schema = yup.object().shape({
   name: yup
@@ -45,6 +46,9 @@ const Register = () => {
   });
 
 
+  const navigate = useNavigate()
+
+
   const [name,setName] = useState('')
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
@@ -52,35 +56,19 @@ const Register = () => {
   const {backendUrl,token,setToken} = useContext(AppContext)
 
 
-  //works fine but nt needed
+  useEffect(() => {
+    // Check for token in URL after Google registration
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
 
-  // const onSubmit = async (data) => {
-  //   console.log(data);
-  //   try {
-  //       const response = await fetch("http://localhost:5000/register", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(data),
-  //       });
-    
-  //       const result = await response.json();
-    
-  //       if (response.ok) {
-  //         console.log("User registered successfully:", result.user);
-  //         reset();
-  //       } else {
-  //         console.error("Error registering user:", result.error);
-  //       }
-  //     } catch (error) {
-  //       console.error("Network error:", error);
-  //     }
+    if (token) {
+      localStorage.setItem("token", token);
+      navigate("/"); 
+    }
+  }, []);
 
-  //     reset();
 
-  //   };
-
+  
   const onSubmit = async (formData)=>{
 
     try {
@@ -93,6 +81,9 @@ const Register = () => {
       if(data.success){
         localStorage.setItem('token',data.token)
         setToken(data.token)
+        toast.success(data.message)
+        navigate('/')
+        reset()
       }else{
         toast.error(data.message)
       }
@@ -104,13 +95,15 @@ const Register = () => {
   }
 
 
-  const handleGoogleLogin = async () => {
+const handleGoogleLogin = async () => {
     try {
         window.open(`http://localhost:5000/auth/google`, "_self");
     } catch (error) {
         console.error("Google login error:", error);
+        toast.error("Google login failed. Please try again.");
     }
-    };
+};
+
     
 
   return (

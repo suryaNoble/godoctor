@@ -1,4 +1,42 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 // import React from 'react'
+
+
+    //this onsubmit works fine and navigates to /navigate but without any db checks for user existence
+//  const onSubmit = async (data) => {
+//     console.log(data);
+//     try {
+//         const response = await fetch("http://localhost:5000/api/user/login", {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//           body: JSON.stringify(data),
+//         });
+    
+//         const result = await response.json();
+    
+//         if (response.ok) {
+//           console.log("User signed in successfully:", result.user);
+//           navigate("/navbar");
+//           reset();
+//         } else {
+//           console.error("Error siging in user:", result.error);
+//           alert("invalid credentials");
+//         }
+//       } catch (error) {
+//         console.error("Network error:", error);
+//       }
+
+//       reset();
+
+//     };
+
+
+
+
+
 import {useForm} from "react-hook-form"
 import { useContext, useEffect, useState } from 'react';
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -51,35 +89,6 @@ const Login = () => {
     const {backendUrl,token,setToken} = useContext(AppContext)
 
 
-    //this onsubmit works fine and navigates to /navigate but without any db checks for user existence
-//  const onSubmit = async (data) => {
-//     console.log(data);
-//     try {
-//         const response = await fetch("http://localhost:5000/api/user/login", {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify(data),
-//         });
-    
-//         const result = await response.json();
-    
-//         if (response.ok) {
-//           console.log("User signed in successfully:", result.user);
-//           navigate("/navbar");
-//           reset();
-//         } else {
-//           console.error("Error siging in user:", result.error);
-//           alert("invalid credentials");
-//         }
-//       } catch (error) {
-//         console.error("Network error:", error);
-//       }
-
-//       reset();
-
-//     };
 
 
 const onSubmit = async (formData)=>{
@@ -99,9 +108,13 @@ const onSubmit = async (formData)=>{
     
     
 
-    if(data.success){
+    if(data.success) {
+        localStorage.setItem('userData', JSON.stringify(data.user)); // Store userData in local storage
+
       localStorage.setItem('token',data.token)
       setToken(data.token)
+      reset()
+      toast.success(data.message)
     }else{
       toast.error(data.message)
     }
@@ -113,14 +126,25 @@ const onSubmit = async (formData)=>{
 }
  
 
-    const handleGoogleLogin = async () => {
-        try {
-          // Redirect user to the backend's Google OAuth route
-          window.open(`http://localhost:5000/auth/google`, "_self");
-        } catch (error) {
-          console.error("Google login error:", error);
-        }
-    };
+const handleGoogleLogin = async () => {
+    try {
+        window.open(`http://localhost:5000/auth/google`, "_self");
+    } catch (error) {
+        console.error("Google login error:", error);
+        toast.error("Google login failed. Please try again.");
+    }
+};
+
+useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+
+    if (token) {
+        localStorage.setItem("token", token);
+        navigate("/"); 
+    }
+}, []);
+
 
 const [showPassword, setShowPassword] = useState(false);
 
@@ -132,6 +156,16 @@ useEffect(()=>{
     navigate('/')
   }
 },[token])
+
+useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
+
+  if (token) {
+    localStorage.setItem("token", token);
+    navigate("/"); 
+  }
+}, []);
 
 
     
