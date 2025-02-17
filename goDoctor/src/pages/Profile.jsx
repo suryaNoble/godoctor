@@ -2,6 +2,8 @@ import { useContext, useState } from "react";
 import { assets } from "../assets/assets_frontend/assets";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
+import { toast } from "sonner";
+
 
 const Profile = () => {
   const { userData, setUserData, token, backendUrl, loadUserProfileData } = useContext(AppContext);
@@ -30,11 +32,11 @@ const Profile = () => {
         setIsEdit(false);
         setImage(null); 
       } else {
-        alert(data.message);
+        toast.warning(data.message);
       }
     } catch (error) {
       console.log(error);
-      alert("An error occurred: " + error.message); 
+      toast.error("An error occurred: " + error.message); 
     }
   };
 

@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { toast } from "sonner";
 
 
 const MyAppointments = () => {
@@ -39,11 +40,11 @@ const MyAppointments = () => {
       const {data} = await axios.post(backendUrl+'/api/user/cancel-appointment',{appointmentId},{headers:{token}})
 
       if(data.success){
-        alert(data.message)
+        toast.success(data.message)
         getUserAppointments()
         getDoctorsData()
       }else{
-        alert(data.message)
+        toast.warning(data.message)
       }
     } catch (error) {
       console.log(error);

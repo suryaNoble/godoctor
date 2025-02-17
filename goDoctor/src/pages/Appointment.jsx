@@ -6,6 +6,7 @@ import { AppContext } from "../context/AppContext"
 import { assets } from "../assets/assets_frontend/assets"
 import RelatedDoctors from "../components/RelatedDoctors"
 import axios from "axios"
+import { toast } from "sonner";
 
 const Appointment = () => {
 
@@ -96,7 +97,7 @@ const Appointment = () => {
   const bookAppointment = async ()=>{
 
     if(!token){
-      alert("Log in to book appointment")
+      toast.warning("Log in to book appointment")
       return navigate('/login')
     }
 
@@ -104,13 +105,13 @@ const Appointment = () => {
 
       if (!slotTime || !docSlots[slotIndex] || !docSlots[slotIndex][0]) {
 
-        alert("Please select both date and time.");
+        toast.warning("Please select both date and time.");
         return;
       }
 
       const date = docSlots[slotIndex][0].datetime; // Ensure docSlots[slotIndex][0] is defined
       if (date.getHours() >= 20 && date.getMinutes() > 30) {
-        alert("Booking is available from tomorrow.");
+        toast.info("Booking is available from tomorrow.");
         return;
       }
 
@@ -125,22 +126,22 @@ const Appointment = () => {
       const slotDate = day + "_" + month + "_" + year
       // console.log(slotDate);
       if(!slotDate){
-        alert("No slots selected")
+        toast.info("No slots selected")
       }
 
       const { data } = await axios.post(backendUrl + '/api/user/book-appointment', { userId: token, docId, slotDate, slotTime }, { headers: { token } });
 
 
       if (data.success) {
-        alert("Appointment booked");
+        toast.success("Appointment booked");
         getDoctorsData();
         navigate('/my-appointments');
       } else {
-        alert(data.message);
+        toast.warning(data.message);
       }
       
       if (docSlots[slotIndex].length === 0) {
-        alert("No slots available for the selected date.");
+        toast.error("No slots available for the selected date.");
         return;
       }
 
