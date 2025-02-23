@@ -18,7 +18,6 @@ const authUser = async (req,res,next)=>{
 
         next()
 
-        //5 hours 47 minutes wrking fine storing data from hopscotch but not form 
             
         
     } catch (error) {

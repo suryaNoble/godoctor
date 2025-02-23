@@ -70,7 +70,7 @@ const onSubmit = async (formData)=>{
     
 
     if(data.success) {
-        localStorage.setItem('userData', JSON.stringify(data.user)); // Store userData in local storage
+        localStorage.setItem('userData', JSON.stringify(data.user)); 
 
       localStorage.setItem('token',data.token)
       setToken(data.token)
@@ -82,7 +82,7 @@ const onSubmit = async (formData)=>{
     
   } catch (error) {
     console.log(error)
-    // res.json({success:false,message:"login failed in Login.jsc of goDoctor/pages"})
+    toast.error("login failed ")
   }
 }
  

@@ -37,7 +37,8 @@ import axios from 'axios';
       if (!token) return;
 
       try {
-        const res = await axios.get("http://localhost:5000/api/user/profile", {
+        const res = await axios.get("http://localhost:5000/api/user/get-profile", {
+
           headers: { Authorization: `Bearer ${token}` },
         });
         setUserData(res.data.user); // Set user data

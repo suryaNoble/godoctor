@@ -20,8 +20,8 @@ const AddDoctor = () => {
   const[address2,setAddress2] = useState('')
 
   const {backendUrl, atoken} = useContext(AdminContext)
-  console.log(backendUrl) //working
-  console.log(atoken) //corectye
+  console.log(backendUrl) 
+  console.log(atoken)
 
   const onSubmitHandler =async (e)=>{
     e.preventDefault()
@@ -137,6 +137,7 @@ const AddDoctor = () => {
               <option value="Pediatricians">Pediatricians</option>
               <option value="Neurologist">Neurologist</option>
               <option value="Gastroenterologist">Gastroenterologist</option>
+              <option value="Cardiologist">Cardiologist</option>
             </select>
           </div>
 

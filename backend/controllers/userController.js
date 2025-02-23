@@ -8,6 +8,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import doctorModel from '../models/doctorModel.js'
 import appointmentModel from '../models/appointmentModel.js';
 import razorpay from 'razorpay'
+import { toast } from 'sonner';
 
 // Registering user
 const registerUser = async (req, res) => {
@@ -48,13 +49,24 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        if(!email || !password){
+            toast.error('Please fill in all fields')
+        }
         const user = await userModel.findOne({ email });
 
         if (!user) {
             return res.json({ success: false, message: "User does not exist" });
         }
 
+        if (!password) {
+            return res.json({ success: false, message: "Password is required" });
+        }
+        if (!user.password) {
+            return res.json({ success: false, message: "User password not found" });
+        }
         const isMatch = await bcrypt.compare(password, user.password);
+
 
         if (isMatch) {
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);

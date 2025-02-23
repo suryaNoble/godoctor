@@ -28,7 +28,10 @@ userRouter.get('/auth/google', passport.authenticate('google', {
 
 userRouter.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: 'http://localhost:5173/about' }),
     (req, res) => {
-        res.redirect('http://localhost:5173/navbar');
+        // res.redirect('http://localhost:5173/navbar');
+        const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+        res.redirect(`${FRONTEND_URL}/navbar`);
+
     });
 
 export default userRouter;
