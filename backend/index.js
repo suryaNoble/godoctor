@@ -5,7 +5,7 @@ import session from "express-session";
 import cors from "cors";
 import path from 'path'
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import bodyParser from "body-parser";
 import pkg from "pg";
 const { Pool } = pkg;
