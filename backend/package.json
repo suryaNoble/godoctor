@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
-     "postinstall": "npm rebuild bcrypt --build-from-source"
+    "dev": "nodemon index.js"
+    
   },
   "author": "",
   "license": "ISC",

@@ -1,7 +1,8 @@
 // user tasks like booking appointments, cancelling appointments and viewing appointments, login, register, payment gateway etc...
 
 import validator from 'validator';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
+
 import userModel from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
@@ -27,7 +28,8 @@ const registerUser = async (req, res) => {
             return res.json({ success: false, message: "Please provide a strong password!" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hashSync(password, 10);
+
 
         const userData = {
             name, email, password: hashedPassword
@@ -65,7 +67,8 @@ const loginUser = async (req, res) => {
         if (!user.password) {
             return res.json({ success: false, message: "User password not found" });
         }
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compareSync(password, user.password);
+
 
 
         if (isMatch) {
