@@ -73,7 +73,8 @@ const Register = () => {
 
     try {
   
-      const {data} = await axios.post('http://localhost:5000/api/user/register',formData,
+      const {data} = await axios.post(`${backendUrl}/api/user/register`,formData,
+
         {
           headers: { "Content-Type": "application/json" }  
         })
@@ -97,7 +98,8 @@ const Register = () => {
 
 const handleGoogleLogin = async () => {
     try {
-        window.open(`http://localhost:5000/auth/google`, "_self");
+        window.open(`${backendUrl}/auth/google`, "_self");
+
     } catch (error) {
         console.error("Google login error:", error);
         toast.error("Google login failed. Please try again.");
