@@ -72,7 +72,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID || "56119663076-oapcbtntjguq867np9fslgd8p4q94ds5.apps.googleusercontent.com",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "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",
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/auth/google/callback",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://godoctor-backend.onrender.com/auth/google/callback",
+
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -120,7 +121,8 @@ app.get(
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:5173/login" }),
+  passport.authenticate("google", { failureRedirect: "https://godoctor-frontend.onrender.com/login" }),
+
   async (req, res) => {
     try {
       const { id, displayName, emails } = req.user;
@@ -141,11 +143,13 @@ app.get(
 
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-      const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+      const FRONTEND_URL = process.env.FRONTEND_URL || "https://godoctor-frontend.onrender.com";
+
       res.redirect(`${FRONTEND_URL}?token=${token}`);
           } catch (error) {
       console.error("Google Auth Error:", error);
-      res.redirect("http://localhost:5173/login");
+      res.redirect("https://godoctor-frontend.onrender.com/login");
+
     }
   }
 );
@@ -187,5 +191,3 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`http://localhost:${PORT}`);
 });
-
-
