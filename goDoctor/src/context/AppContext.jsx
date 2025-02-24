@@ -9,7 +9,7 @@ export const AppContext = createContext();
 
 const AppContextProivder = (props) => {
   const currency = "₹";
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl ="https://godoctor-backend.onrender.com";
   const [doctors, setDoctors] = useState([]);
   const [token, setToken] = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : false
