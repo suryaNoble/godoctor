@@ -58,10 +58,11 @@ const onSubmit = async (formData)=>{
 
   try {
 
-    const {data} = await axios.post('http://localhost:5000/api/user/login',formData,
+    const {data} = await axios.post(`${backendUrl}/api/user/login`,formData,
       {
         headers: { "Content-Type": "application/json" }  
       })
+
 
     console.log(formData);
     console.log('login.jsx sending post request');
@@ -89,7 +90,8 @@ const onSubmit = async (formData)=>{
 
 const handleGoogleLogin = async () => {
     try {
-        window.open(`http://localhost:5000/auth/google`, "_self");
+        window.open(`${backendUrl}/auth/google`, "_self");
+
     } catch (error) {
         console.error("Google login error:", error);
         toast.error("Google login failed. Please try again.");
