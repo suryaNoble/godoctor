@@ -47,7 +47,8 @@ const Login = () => {
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
 
-    const {backendUrl,token,setToken} = useContext(AppContext)
+    const {backendUrl, token, setToken} = useContext(AppContext)
+
 
 
 
@@ -58,7 +59,8 @@ const onSubmit = async (formData)=>{
 
   try {
 
-    const {data} = await axios.post(`${backendUrl}/api/user/login`,formData,
+    const {data} = await axios.post(`${backendUrl}/api/user/login`, formData,
+
       {
         headers: { "Content-Type": "application/json" }  
       })
@@ -91,6 +93,7 @@ const onSubmit = async (formData)=>{
 const handleGoogleLogin = async () => {
     try {
         window.open(`${backendUrl}/auth/google`, "_self");
+
 
     } catch (error) {
         console.error("Google login error:", error);
