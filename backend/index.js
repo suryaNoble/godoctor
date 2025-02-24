@@ -44,7 +44,12 @@ const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"];
 //   })
 // );
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: ['https://godoctor-admin.onrender.com','https://godoctor-frontend.onrender.com','http://localhost:5173','http://localhost:5174'], 
+  methods: 'GET,POST,PUT,DELETE,PATCH,OPTIONS',
+  credentials: true, // Allow cookies if needed
+}));
 app.use(
   session({
     secret: 'bfa377cc789876877ac51aad201bcf9a90eba0a2d1654d4e8076a1c956d40b86',
