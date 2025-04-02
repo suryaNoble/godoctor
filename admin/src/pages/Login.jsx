@@ -95,7 +95,7 @@ const Login = () => {
         <button className="bg-primary cursor-pointer text-white w-full  py-2 rounded-md text-base">
           {loading ? (
             <div className="flex justify-center items-center">
-              <AiOutlineLoading3Quarters className="animate-spin size-4 text-4xl text-blue-500" />
+              <AiOutlineLoading3Quarters className="animate-spin size-4 text-4xl text-white" />
               <p className="ml-2 text-white">Signing in...</p>
             </div>
           ) : (
