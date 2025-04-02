@@ -9,16 +9,18 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
-import axios from 'axios'
-import { toast } from "react-toastify";
+import axios from "axios";
+import { toast } from "sonner";
 import { useContext, useState } from "react";
-
 
 const schema = yup.object().shape({
   name: yup
     .string()
     .required("Name is required")
-    .matches(/^[a-zA-Z\s]+$/, "Name must not contain numbers or special characters"),
+    .matches(
+      /^[a-zA-Z\s]+$/,
+      "Name must not contain numbers or special characters"
+    ),
   email: yup
     .string()
     .required("Email is required")
@@ -41,20 +43,17 @@ const Register = () => {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema), 
-    mode: "onChange", 
+    resolver: yupResolver(schema),
+    mode: "onChange",
   });
 
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-
-  const [name,setName] = useState('')
-  const [email,setEmail] = useState('')
-  const [password,setPassword] = useState('')
-
-  const {backendUrl,token,setToken} = useContext(AppContext)
-
+  const { backendUrl, token, setToken } = useContext(AppContext);
 
   useEffect(() => {
     // Check for token in URL after Google registration
@@ -63,50 +62,44 @@ const Register = () => {
 
     if (token) {
       localStorage.setItem("token", token);
-      navigate("/"); 
+      navigate("/");
     }
   }, []);
 
-
-  
-  const onSubmit = async (formData)=>{
-
+  const onSubmit = async (formData) => {
     try {
-  
-      const {data} = await axios.post(`${backendUrl}/api/user/register`,formData,
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/register`,
+        formData,
 
         {
-          headers: { "Content-Type": "application/json" }  
-        })
-  
-      if(data.success){
-        localStorage.setItem('token',data.token)
-        setToken(data.token)
-        toast.success(data.message)
-        navigate('/')
-        reset()
-      }else{
-        toast.error(data.message)
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+        toast.success("Registered successfully");
+        navigate("/");
+        reset();
+      } else {
+        toast.error("Registration failed!");
       }
-      
     } catch (error) {
-      console.log(error)
+      console.log(error);
       // res.json({success:false,message:"register failed in register.jsx of goDoctor/pages"})
     }
-  }
+  };
 
-
-const handleGoogleLogin = async () => {
+  const handleGoogleLogin = async () => {
     try {
-        window.open(`${backendUrl}/auth/google`, "_self");
-
+      window.open(`${backendUrl}/auth/google`, "_self");
     } catch (error) {
-        console.error("Google login error:", error);
-        toast.error("Google login failed. Please try again.");
+      console.error("Google login error:", error);
+      toast.error("Google login failed. Please try again.");
     }
-};
-
-    
+  };
 
   return (
     <div
@@ -120,42 +113,54 @@ const handleGoogleLogin = async () => {
             <div className="relative">
               <input
                 type="text"
-                onChange={(e)=>{setName(e.target.value)}}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
                 {...register("name")}
                 placeholder="Name"
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
               />
               <FaRegUserCircle className="absolute right-4 top-3 text-white" />
               {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
               )}
             </div>
 
             <div className="relative">
               <input
                 type="email"
-                onChange={(e)=>{setEmail(e.target.value)}}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
                 {...register("email")}
                 placeholder="Email"
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
               />
               <MdEmail className="absolute right-4 top-3" />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
             <div className="relative">
               <input
                 type="password"
-                onChange={(e)=>{setPassword(e.target.value)}}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
                 {...register("password")}
                 placeholder="Password"
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
               />
               <RiLockPasswordLine className="absolute right-4 top-3 text-white" />
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -168,14 +173,17 @@ const handleGoogleLogin = async () => {
               />
               <RiLockPasswordLine className="absolute right-4 top-3 text-white" />
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
 
             <div>
               <button
                 type="submit"
-                className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full">
+                className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full"
+              >
                 Register
               </button>
             </div>
@@ -192,7 +200,10 @@ const handleGoogleLogin = async () => {
         </form>
 
         <div className="flex items-center justify-center text-white mt-4">
-          <button onClick={handleGoogleLogin} className="flex items-center space-x-2">
+          <button
+            onClick={handleGoogleLogin}
+            className="flex items-center space-x-2"
+          >
             <FcGoogle />
             <span>Continue with Google</span>
           </button>
