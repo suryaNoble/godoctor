@@ -9,6 +9,7 @@ import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "sonner";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const schema = yup.object().shape({
   email: yup
@@ -42,10 +43,12 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { backendUrl, token, setToken } = useContext(AppContext);
 
   const onSubmit = async (formData) => {
+    setLoading(true);
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/user/login`,
@@ -56,10 +59,6 @@ const Login = () => {
         }
       );
 
-      console.log(formData);
-      console.log("login.jsx sending post request");
-      console.log(data);
-
       if (data.success) {
         localStorage.setItem("userData", JSON.stringify(data.user));
 
@@ -67,13 +66,14 @@ const Login = () => {
         setToken(data.token);
         reset();
         toast.success("Login successful");
-        // navigate("/");
       } else {
         toast.error("login failed");
       }
     } catch (error) {
       console.log(error);
       toast.error("login failed ");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -171,7 +171,14 @@ const Login = () => {
                 type="submit"
                 className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full"
               >
-                Login
+                {loading ? (
+                  <div className="flex justify-center items-center">
+                    <AiOutlineLoading3Quarters className="animate-spin size-4 text-4xl text-blue-500" />
+                    <p className="ml-2 text-white">Signing in...</p>
+                  </div>
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
             <p className="text-center text-white mt-4">
