@@ -190,7 +190,7 @@ const Register = () => {
               >
                 {loading ? (
                   <div className="flex justify-center items-center">
-                    <AiOutlineLoading3Quarters className="animate-spin size-4 text-4xl text-blue-500" />
+                    <AiOutlineLoading3Quarters className="animate-spin size-4 text-4xl text-white" />
                     <p className="ml-2 text-white">Registering...</p>
                   </div>
                 ) : (
