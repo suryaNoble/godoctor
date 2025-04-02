@@ -12,6 +12,7 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "sonner";
 import { useContext, useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const schema = yup.object().shape({
   name: yup
@@ -52,6 +53,7 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { backendUrl, token, setToken } = useContext(AppContext);
 
@@ -67,6 +69,7 @@ const Register = () => {
   }, []);
 
   const onSubmit = async (formData) => {
+    setLoading(true);
     try {
       const { data } = await axios.post(
         `${backendUrl}/api/user/register`,
@@ -88,7 +91,8 @@ const Register = () => {
       }
     } catch (error) {
       console.log(error);
-      // res.json({success:false,message:"register failed in register.jsx of goDoctor/pages"})
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -184,7 +188,14 @@ const Register = () => {
                 type="submit"
                 className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full"
               >
-                Register
+                {loading ? (
+                  <div className="flex justify-center items-center">
+                    <AiOutlineLoading3Quarters className="animate-spin size-4 text-4xl text-blue-500" />
+                    <p className="ml-2 text-white">Registering...</p>
+                  </div>
+                ) : (
+                  "Register"
+                )}
               </button>
             </div>
 
