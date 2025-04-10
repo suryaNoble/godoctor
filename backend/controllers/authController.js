@@ -16,16 +16,26 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/auth_db", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log("MongoDB Connected"))
-  .catch(err => console.error("MongoDB connection error:", err));
+mongoose
+  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/auth_db", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+console.log("this is mongo db url");
+console.log(process.env.MONGO_URI);
 
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
+    origin: [
+      process.env.CLIENT_ORIGIN,
+      "http://localhost:5173",
+      "http://localhost:5000",
+    ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -46,15 +56,20 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/auth/google/callback",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      passReqToCallback: true, // Add this line
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (req, accessToken, refreshToken, profile, done) => {
       try {
         console.log("Google Profile:", profile);
-        const email = profile.emails[0].value;
+        const email = profile.emails?.[0]?.value;
         const name = profile.displayName;
-        const photo = profile.photos[0]?.value;
-        
+        const photo = profile.photos?.[0]?.value;
+
+        if (!email) {
+          return done(new Error("No email found in Google profile"), null);
+        }
+
         let user = await User.findOne({ email });
 
         if (!user) {
@@ -63,7 +78,13 @@ passport.use(
             email,
             googleId: profile.id,
             image: photo,
+            isVerified: true,
           });
+          await user.save();
+        } else if (!user.googleId) {
+          // Update existing user with Google ID
+          user.googleId = profile.id;
+          if (photo) user.image = photo;
           await user.save();
         }
 
@@ -90,23 +111,41 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:5173/about" }),
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: false,
+  }),
   (req, res) => {
-    res.redirect("http://localhost:5173/navbar");
+    try {
+      const token = jwt.sign(
+        { id: req.user._id, email: req.user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      res.redirect(
+        `${process.env.CLIENT_ORIGIN}/login?token=${encodeURIComponent(token)}`
+      );
+    } catch (err) {
+      console.error("Error generating token:", err);
+      res.redirect(`${process.env.CLIENT_ORIGIN}/login?error=auth_failed`);
+    }
   }
 );
 
-// User Registration
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   try {
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: "User already exists" });
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
     user = new User({ name, email, password: hashedPassword });
     await user.save();
@@ -125,9 +164,10 @@ app.post("/signin", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User does not exist" });
-    
+
     const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(401).json({ message: "Invalid credentials" });
+    if (!validPassword)
+      return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET);
     res.status(200).json({ message: "Login successful", token });
