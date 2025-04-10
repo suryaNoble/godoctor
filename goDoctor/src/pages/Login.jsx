@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { MdEmail } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import { AppContext } from "../context/AppContext";
@@ -30,6 +30,7 @@ const schema = yup.object().shape({
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     register,
@@ -89,32 +90,23 @@ const Login = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
+    const error = urlParams.get("error");
+
+    if (error) {
+      toast.error("Google login failed. Please try again.");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
     if (token) {
       localStorage.setItem("token", token);
-      navigate("/");
+      setToken(token);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     }
-  }, []);
+  }, [navigate, setToken]);
 
   const [showPassword, setShowPassword] = useState(false);
-
-  //redirecting user after succesful login
-
-  useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
-  }, [token]);
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
-
-    if (token) {
-      localStorage.setItem("token", token);
-      navigate("/");
-    }
-  }, []);
 
   return (
     <div
