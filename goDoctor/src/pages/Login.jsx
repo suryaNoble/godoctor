@@ -101,8 +101,7 @@ const Login = () => {
       localStorage.setItem("token", token);
       setToken(token);
       window.history.replaceState({}, document.title, window.location.pathname);
-      const from = location.state?.from?.pathname || "/";
-      navigate(from, { replace: true });
+      navigate("/");
     }
   }, [navigate, setToken]);
 
