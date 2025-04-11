@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { MdEmail } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
+import { RiEyeFill, RiEyeOffFill, RiSunLine, RiMoonLine } from "react-icons/ri";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "sonner";
@@ -31,6 +31,7 @@ const schema = yup.object().shape({
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [darkMode, setDarkMode] = useState(false);
 
   const {
     register,
@@ -54,7 +55,6 @@ const Login = () => {
       const { data } = await axios.post(
         `${backendUrl}/api/user/login`,
         formData,
-
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -62,17 +62,17 @@ const Login = () => {
 
       if (data.success) {
         localStorage.setItem("userData", JSON.stringify(data.user));
-
         localStorage.setItem("token", data.token);
         setToken(data.token);
         reset();
         toast.success("Login successful");
+        navigate("/");
       } else {
-        toast.error("login failed");
+        toast.error("invalid credentials");
       }
     } catch (error) {
       console.log(error);
-      toast.error("login failed ");
+      toast.error("Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -101,96 +101,168 @@ const Login = () => {
       localStorage.setItem("token", token);
       setToken(token);
       window.history.replaceState({}, document.title, window.location.pathname);
+      const from = location.state?.from?.pathname || "/";
       navigate("/");
     }
-  }, [navigate, setToken]);
+  }, [navigate, setToken, token]);
 
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div
-      className="w-full h-screen rounded-lg flex justify-center items-center bg-cover bg-center"
-      style={{ backgroundImage: "url('/water.jpg')" }}
+      className={`w-full min-h-screen flex items-center justify-center transition-colors ${
+        darkMode ? "bg-gray-900" : "bg-blue-50"
+      }`}
     >
-      <div className="p-8 rounded-lg shadow-lg w-full max-w-md backdrop-blur-lg">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <h2 className="text-3xl text-white text-center mb-6">Login</h2>
-          <div className="space-y-4">
+      <div
+        className={`w-full max-w-md p-8 rounded-xl shadow-xl transition-all ${
+          darkMode ? "bg-gray-800" : "bg-white"
+        }`}
+      >
+        <div className="flex justify-between items-center mb-8">
+          <h2
+            className={`text-2xl font-bold ${
+              darkMode ? "text-white" : "text-gray-800"
+            }`}
+          >
+            Login
+          </h2>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className={`p-2 rounded-full ${
+              darkMode
+                ? "bg-gray-700 text-yellow-300"
+                : "bg-blue-100 text-blue-600"
+            }`}
+          >
+            {darkMode ? <RiSunLine size={20} /> : <RiMoonLine size={20} />}
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-2">
             <div className="relative">
-              <MdEmail className="absolute left-4 top-3 transform  text-gray-400" />
+              <MdEmail
+                className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                  darkMode ? "text-blue-300" : "text-blue-500"
+                }`}
+              />
               <input
                 type="email"
                 name="email"
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
+                onChange={(e) => setEmail(e.target.value)}
                 {...register("email")}
                 placeholder="Email"
-                className="w-full pl-12 pr-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
+                className={`w-full pl-12 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-white border-gray-300"
+                }`}
               />
-              {errors.email && (
-                <p className="text-red-800 text-sm">{errors.email.message}</p>
-              )}
             </div>
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
             <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                {...register("password")}
-                placeholder="Password"
-                className="w-full pl-12 pr-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
-              />
-              {/* <RiLockPasswordLine className="absolute right-4 top-3 text-white focus:outline-none"/> */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute left-4 top-3 transform  text-gray-400 border-none focus:outline-none"
+                className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                  darkMode ? "text-blue-300" : "text-blue-500"
+                }`}
               >
                 {showPassword ? <RiEyeOffFill /> : <RiEyeFill />}
               </button>
-              {errors.password && (
-                <p className="text-red-800 text-sm">
-                  {errors.password.message}
-                </p>
-              )}
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                onChange={(e) => setPassword(e.target.value)}
+                {...register("password")}
+                placeholder="Password"
+                className={`w-full pl-12 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-white border-gray-300"
+                }`}
+              />
             </div>
-            <div>
-              <button
-                type="submit"
-                className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full"
-              >
-                {loading ? (
-                  <div className="flex justify-center items-center">
-                    <AiOutlineLoading3Quarters className="animate-spin size-4 text-4xl text-white" />
-                    <p className="ml-2 text-white">Signing in...</p>
-                  </div>
-                ) : (
-                  "Login"
-                )}
-              </button>
-            </div>
-            <p className="text-center text-white mt-4">
-              Don&apos;t have an account?{" "}
-              <Link to="/register">
-                <span className="text-blue-400 hover:underline cursor-pointer">
-                  Register
-                </span>
-              </Link>
-            </p>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
-        </form>
-        <div className="flex items-center justify-center text-white mt-4">
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-medium flex items-center justify-center transition-colors ${
+              loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+            } text-white`}
+          >
+            {loading ? (
+              <>
+                <AiOutlineLoading3Quarters className="animate-spin mr-2" />
+                Signing in...
+              </>
+            ) : (
+              "Login"
+            )}
+          </button>
+
+          <div className="flex items-center my-6">
+            <div
+              className={`flex-grow h-px ${
+                darkMode ? "bg-gray-600" : "bg-gray-200"
+              }`}
+            ></div>
+            <span
+              className={`px-3 ${darkMode ? "text-gray-400" : "text-gray-500"}`}
+            >
+              OR
+            </span>
+            <div
+              className={`flex-grow h-px ${
+                darkMode ? "bg-gray-600" : "bg-gray-200"
+              }`}
+            ></div>
+          </div>
+
           <button
             onClick={handleGoogleLogin}
-            className="flex items-center space-x-2"
+            className={`w-full py-3 rounded-lg font-medium flex items-center justify-center space-x-2 border transition ${
+              darkMode
+                ? "bg-gray-700 border-gray-600 hover:bg-gray-600"
+                : "bg-white border-gray-300 hover:bg-gray-50"
+            }`}
           >
-            <FcGoogle />
-            <span>Login with Google</span>
+            <FcGoogle size={20} />
+            <span className={darkMode ? "text-white" : "text-gray-700"}>
+              Login with Google
+            </span>
           </button>
-        </div>
+
+          <p
+            className={`text-center mt-6 ${
+              darkMode ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className={`font-medium hover:underline ${
+                darkMode ? "text-blue-400" : "text-blue-600"
+              }`}
+            >
+              Register
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   );
