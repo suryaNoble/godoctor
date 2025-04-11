@@ -258,6 +258,7 @@ const Login = () => {
               className={`font-medium hover:underline ${
                 darkMode ? "text-blue-400" : "text-blue-600"
               }`}
+              onClick={() => window.scrollTo(0, 0)}
             >
               Register
             </Link>

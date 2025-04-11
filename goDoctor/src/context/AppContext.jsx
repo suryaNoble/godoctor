@@ -9,12 +9,13 @@ export const AppContext = createContext();
 
 const AppContextProivder = (props) => {
   const currency = "₹";
-  const backendUrl ="https://godoctor-backend.onrender.com";
+  const backendUrl = "https://godoctor-backend.onrender.com";
   const [doctors, setDoctors] = useState([]);
   const [token, setToken] = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : false
   );
   const [userData, setUserData] = useState(false);
+  const [initializing, setInitializing] = useState(true);
 
   const loadUserProfileData = async () => {
     try {
@@ -33,11 +34,15 @@ const AppContextProivder = (props) => {
   };
 
   useEffect(() => {
-    if (token) {
-      loadUserProfileData();
-    } else {
-      setUserData(false);
-    }
+    const init = async () => {
+      if (token) {
+        await loadUserProfileData();
+      } else {
+        setUserData(false);
+      }
+      setInitializing(false);
+    };
+    init();
   }, [token]);
 
   const getDoctorsData = async () => {
@@ -66,6 +71,7 @@ const AppContextProivder = (props) => {
     setUserData,
     loadUserProfileData,
     getDoctorsData,
+    initializing,
   };
 
   useEffect(() => {
