@@ -18,6 +18,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Toaster } from "sonner";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthRoute from "./components/AuthRoute";
 
 function App() {
   return (
@@ -31,8 +32,6 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/doctors/:speciality" element={<Doctors />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/doctorprofile/:id" element={<DoctorProfile />} />
         <Route path="/doctorprofile" element={<DoctorProfile />} />
 
@@ -41,6 +40,11 @@ function App() {
           <Route path="/my-appointments" element={<MyAppointments />} />
           <Route path="/appointment/:docId" element={<Appointment />} />
           <Route path="/profile" element={<Profile />} />
+        </Route>
+
+        <Route element={<AuthRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Route>
 
         <Route path="*" element={<Space />} />

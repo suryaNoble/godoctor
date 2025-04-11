@@ -1,17 +1,15 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { RiLockPasswordLine } from "react-icons/ri";
+import { RiEyeFill, RiEyeOffFill, RiSunLine, RiMoonLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "sonner";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const schema = yup.object().shape({
@@ -49,6 +47,9 @@ const Register = () => {
   });
 
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,7 +59,6 @@ const Register = () => {
   const { backendUrl, token, setToken } = useContext(AppContext);
 
   useEffect(() => {
-    // Check for token in URL after Google registration
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
 
@@ -66,7 +66,7 @@ const Register = () => {
       localStorage.setItem("token", token);
       navigate("/");
     }
-  }, []);
+  }, [navigate, token]);
 
   const onSubmit = async (formData) => {
     setLoading(true);
@@ -74,7 +74,6 @@ const Register = () => {
       const { data } = await axios.post(
         `${backendUrl}/api/user/register`,
         formData,
-
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -107,118 +106,238 @@ const Register = () => {
 
   return (
     <div
-      className="w-full h-screen rounded-lg flex justify-center items-center bg-cover bg-center"
-      style={{ backgroundImage: "url('/water.jpg')" }}
+      className={`w-full min-h-screen flex items-center justify-center transition-colors ${
+        darkMode ? "bg-gray-900" : "bg-blue-50"
+      }`}
     >
-      <div className="p-8 rounded-lg shadow-lg w-full max-w-md backdrop-blur-lg">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <h2 className="text-3xl text-white text-center mb-6">Register</h2>
-          <div className="space-y-4">
-            <div className="relative">
-              <input
-                type="text"
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-                {...register("name")}
-                placeholder="Name"
-                className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
-              />
-              <FaRegUserCircle className="absolute right-4 top-3 text-white" />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-
-            <div className="relative">
-              <input
-                type="email"
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-                {...register("email")}
-                placeholder="Email"
-                className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
-              />
-              <MdEmail className="absolute right-4 top-3" />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            <div className="relative">
-              <input
-                type="password"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                {...register("password")}
-                placeholder="Password"
-                className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
-              />
-              <RiLockPasswordLine className="absolute right-4 top-3 text-white" />
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            <div className="relative">
-              <input
-                type="password"
-                {...register("confirmPassword")}
-                placeholder="Confirm Password"
-                className="w-full px-4 py-2 bg-gray-800 text-white rounded-full border-none focus:outline-none"
-              />
-              <RiLockPasswordLine className="absolute right-4 top-3 text-white" />
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full"
-              >
-                {loading ? (
-                  <div className="flex justify-center items-center">
-                    <AiOutlineLoading3Quarters className="animate-spin size-4 text-4xl text-white" />
-                    <p className="ml-2 text-white">Registering...</p>
-                  </div>
-                ) : (
-                  "Register"
-                )}
-              </button>
-            </div>
-
-            <p className="text-center text-white mt-4">
-              Already a user?{" "}
-              <Link to="/login">
-                <span className="text-blue-400 hover:underline cursor-pointer">
-                  Login
-                </span>
-              </Link>
-            </p>
-          </div>
-        </form>
-
-        <div className="flex items-center justify-center text-white mt-4">
-          <button
-            onClick={handleGoogleLogin}
-            className="flex items-center space-x-2"
+      <div
+        className={`w-full max-w-md p-8 rounded-xl shadow-xl transition-all ${
+          darkMode ? "bg-gray-800" : "bg-white"
+        }`}
+      >
+        <div className="flex justify-between items-center mb-8">
+          <h2
+            className={`text-2xl font-bold ${
+              darkMode ? "text-white" : "text-gray-800"
+            }`}
           >
-            <FcGoogle />
-            <span>Continue with Google</span>
+            Create Account
+          </h2>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className={`p-2 rounded-full ${
+              darkMode
+                ? "bg-gray-700 text-yellow-300"
+                : "bg-blue-100 text-blue-600"
+            }`}
+          >
+            {darkMode ? <RiSunLine size={20} /> : <RiMoonLine size={20} />}
           </button>
         </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div className="space-y-1">
+            <label
+              className={`text-sm font-medium ${
+                darkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Full Name
+            </label>
+            <div className="relative">
+              <FaRegUserCircle
+                className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                  darkMode ? "text-blue-300" : "text-blue-500"
+                }`}
+              />
+              <input
+                type="text"
+                onChange={(e) => setName(e.target.value)}
+                {...register("name")}
+                placeholder="Full Name"
+                className={`w-full pl-12 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-white border-gray-300"
+                }`}
+              />
+            </div>
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label
+              className={`text-sm font-medium ${
+                darkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Email
+            </label>
+            <div className="relative">
+              <MdEmail
+                className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                  darkMode ? "text-blue-300" : "text-blue-500"
+                }`}
+              />
+              <input
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                {...register("email")}
+                placeholder="your@email.com"
+                className={`w-full pl-12 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-white border-gray-300"
+                }`}
+              />
+            </div>
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label
+              className={`text-sm font-medium ${
+                darkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Password
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                  darkMode ? "text-blue-300" : "text-blue-500"
+                }`}
+              >
+                {showPassword ? <RiEyeOffFill /> : <RiEyeFill />}
+              </button>
+              <input
+                type={showPassword ? "text" : "password"}
+                onChange={(e) => setPassword(e.target.value)}
+                {...register("password")}
+                placeholder="••••••••"
+                className={`w-full pl-12 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-white border-gray-300"
+                }`}
+              />
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            <label
+              className={`text-sm font-medium ${
+                darkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Confirm Password
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                  darkMode ? "text-blue-300" : "text-blue-500"
+                }`}
+              >
+                {showConfirmPassword ? <RiEyeOffFill /> : <RiEyeFill />}
+              </button>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                {...register("confirmPassword")}
+                placeholder="••••••••"
+                className={`w-full pl-12 pr-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
+                  darkMode
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-white border-gray-300"
+                }`}
+              />
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-medium flex items-center justify-center transition-colors ${
+              loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+            } text-white`}
+          >
+            {loading ? (
+              <>
+                <AiOutlineLoading3Quarters className="animate-spin mr-2" />
+                Registering...
+              </>
+            ) : (
+              "Register"
+            )}
+          </button>
+
+          <div className="flex items-center my-6">
+            <div
+              className={`flex-grow h-px ${
+                darkMode ? "bg-gray-600" : "bg-gray-200"
+              }`}
+            ></div>
+            <span
+              className={`px-3 ${darkMode ? "text-gray-400" : "text-gray-500"}`}
+            >
+              OR
+            </span>
+            <div
+              className={`flex-grow h-px ${
+                darkMode ? "bg-gray-600" : "bg-gray-200"
+              }`}
+            ></div>
+          </div>
+
+          <button
+            onClick={handleGoogleLogin}
+            className={`w-full py-3 rounded-lg font-medium flex items-center justify-center space-x-2 border transition ${
+              darkMode
+                ? "bg-gray-700 border-gray-600 hover:bg-gray-600"
+                : "bg-white border-gray-300 hover:bg-gray-50"
+            }`}
+          >
+            <FcGoogle size={20} />
+            <span className={darkMode ? "text-white" : "text-gray-700"}>
+              Continue with Google
+            </span>
+          </button>
+
+          <p
+            className={`text-center mt-6 ${
+              darkMode ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className={`font-medium hover:underline ${
+                darkMode ? "text-blue-400" : "text-blue-600"
+              }`}
+            >
+              Login
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   );
